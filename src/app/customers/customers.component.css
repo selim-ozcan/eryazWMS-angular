@@ -1,0 +1,54 @@
+.btn-container-eryaz {
+  display: flex;
+  width: 175px;
+  justify-content: space-between;
+  margin: auto;
+}
+
+.btn-eryaz {
+  border-radius: 5px;
+  background-color: rgb(68, 158, 40);
+  width: 75px;
+  height: 30px;
+  text-align: center;
+  color: #ddd;
+  border-style: none;
+  transition: 0.3s all;
+  /*
+  &:not(&[disabled]) {
+      background-color: rgba(68, 158, 40, 1);
+  }*/
+}
+
+.btn-eryaz[disabled] {
+  background-color: rgba(68, 158, 40, 0.3);
+}
+
+.btn-eryaz[disabled]:hover {
+  transform: scale(1) translateY(0);
+  box-shadow: none;
+}
+
+.btn-eryaz:hover {
+  transform: scale(1.1) translateY(-4px);
+  box-shadow: 0 2px 15px 3px rgba(0, 0, 0, 0.5);
+}
+
+.btn-eryaz:active {
+  transform: translateY(2px);
+}
+
+.btn-left-eryaz {
+  display: inline-block;
+}
+
+.btn-right-eryaz {
+  display: inline-block;
+}
+
+.page-number-eryaz {
+  display: inline-block;
+  justify-content: center;
+}
+
+/*# sourceMappingURL=customers.component.css.map */

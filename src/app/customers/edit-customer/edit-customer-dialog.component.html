@@ -1,0 +1,86 @@
+<form class="form-horizontal" autocomplete="off" #editCustomerForm="ngForm" (ngSubmit)="save()">
+    <abp-modal-header [title]="'Edit Product' | localize" (onCloseClick)="bsModalRef.hide()"></abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="customerCode">
+                {{ "Customer Code" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="customerCode" id="customerCode" minlength="2"
+                    maxlength="64" required [(ngModel)]="customer.customerCode" #customerCodeModel="ngModel"
+                    #customerCodeEl />
+                <abp-validation-summary [control]="customerCodeModel" [controlEl]="customerCodeEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="title">
+                {{ "Title" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="title" id="title" required minlength="2" maxlength="32"
+                    [(ngModel)]="customer.title" #titleModel="ngModel" #titleEl />
+                <abp-validation-summary [control]="titleModel" [controlEl]="titleEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="taxNo">
+                {{ "Tax No" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="displayName" id="displayName" required minlength="2"
+                    maxlength="32" [(ngModel)]="customer.taxNo" #taxNoModel="ngModel" #taxNoEl />
+                <abp-validation-summary [control]="taxNoModel" [controlEl]="taxNoEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="taxOffice">
+                {{ "Tax Office" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="veriDaire" id="veriDaire" required minlength="2"
+                    maxlength="32" [(ngModel)]="customer.taxOffice" #veriDaireModel="ngModel" #veriDaireEl />
+                <abp-validation-summary [control]="veriDaireModel" [controlEl]="veriDaireEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="telephone">
+                {{ "Telephone" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="telephone" id="telephone" required minlength="2"
+                    maxlength="32" [(ngModel)]="customer.telephone" #telephoneModel="ngModel" #telephoneEl />
+                <abp-validation-summary [control]="telephoneModel" [controlEl]="telephoneEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="email">
+                {{ "Email" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="email" id="email" required minlength="2" maxlength="32"
+                    [(ngModel)]="customer.email" #emailModel="ngModel" #emailEl />
+                <abp-validation-summary [control]="emailModel" [controlEl]="emailEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <!-- <div class="form-group row mb-0">
+            <label class="col-md-3 col-form-label">
+                {{ "Marka" | localize }}
+            </label>
+            <div class="col-md-9">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" name="marka" id="marka"
+                        [(ngModel)]="product.marka" />
+                    <label class="custom-control-label mt-2" for="marka"></label>
+                </div>
+            </div>
+        </div> -->
+    </div>
+    <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!editCustomerForm.form.valid || saving"
+        (onCancelClick)="bsModalRef.hide()"></abp-modal-footer>
+</form>

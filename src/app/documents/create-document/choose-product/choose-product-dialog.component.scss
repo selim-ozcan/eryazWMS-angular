@@ -1,0 +1,21 @@
+.btn-choose-eryaz {
+    background-image: linear-gradient(to bottom right, #20c997, #0ca678);
+    color: #eee;
+    text-align: center;
+    width: 80%;
+    transition: all .3s;
+
+    &:hover {
+        transform: scale(1.05) translateY(-3px);
+        box-shadow: 0 3px 10px 5px rgba($color: #000000, $alpha: .2);
+    }
+
+    &:active {
+        transform: scale(1.05) translateY(-1px);
+        box-shadow: 0 2px 7px 6px rgba($color: #000000, $alpha: .2);
+    }
+}
+
+.card-subtitle {
+    margin-top: 1.5rem;
+}

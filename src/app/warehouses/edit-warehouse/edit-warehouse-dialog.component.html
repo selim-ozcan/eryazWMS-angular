@@ -1,0 +1,53 @@
+<form class="form-horizontal" autocomplete="off" #editWarehouseForm="ngForm" (ngSubmit)="save()">
+    <abp-modal-header [title]="'Edit Warehouse' | localize" (onCloseClick)="bsModalRef.hide()"></abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="warehouseCode">
+                {{ "WarehouseCode" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="warehouseCode" id="warehouseCode" minlength="2"
+                    maxlength="64" required [(ngModel)]="warehouse.warehouseCode" #warehouseCodeModel="ngModel"
+                    #warehouseCodeEl />
+                <abp-validation-summary [control]="warehouseCodeModel" [controlEl]="warehouseCodeEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="warehouseName">
+                {{ "WarehouseName" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="warehouseName" id="warehouseName" maxlength="128" required
+                    [(ngModel)]="warehouse.warehouseName" #warehouseNameModel="ngModel" #warehouseNameEl />
+                <abp-validation-summary [control]="warehouseNameModel" [controlEl]="warehouseNameEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="warehouseType">
+                {{ "WarehouseType" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="warehouseType" id="warehouseType" maxlength="128" required
+                    [(ngModel)]="warehouse.warehouseType" #warehouseTypeModel="ngModel" #warehouseTypeEl />
+                <abp-validation-summary [control]="warehouseTypeModel" [controlEl]="warehouseTypeEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <!-- <div class="form-group row mb-0">
+            <label class="col-md-3 col-form-label">
+                {{ "Marka" | localize }}
+            </label>
+            <div class="col-md-9">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" name="marka" id="marka"
+                        [(ngModel)]="product.marka" />
+                    <label class="custom-control-label mt-2" for="marka"></label>
+                </div>
+            </div>
+        </div> -->
+    </div>
+    <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!editWarehouseForm.form.valid || saving"
+        (onCancelClick)="bsModalRef.hide()"></abp-modal-footer>
+</form>

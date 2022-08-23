@@ -1,0 +1,51 @@
+<form class="form-horizontal" autocomplete="off" #editProductForm="ngForm" (ngSubmit)="save()">
+    <abp-modal-header [title]="'Edit Product' | localize" (onCloseClick)="bsModalRef.hide()"></abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="productCode">
+                {{ "Product Code" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="productCode" id="productCode" minlength="2" maxlength="64"
+                    required [(ngModel)]="product.productCode" #productCodeModel="ngModel" #productCodeEl />
+                <abp-validation-summary [control]="productCodeModel" [controlEl]="productCodeEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="productName">
+                {{ "ProductName" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="productName" id="productName" maxlength="128" required
+                    [(ngModel)]="product.productName" #productNameModel="ngModel" #productNameEl />
+                <abp-validation-summary [control]="productNameModel" [controlEl]="productNameEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="brand">
+                {{ "Brand" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="brand" id="brand" maxlength="128" required
+                    [(ngModel)]="product.brand" #brandModel="ngModel" #brandEl />
+                <abp-validation-summary [control]="brandModel" [controlEl]="brandEl"></abp-validation-summary>
+            </div>
+        </div>
+        <!-- <div class="form-group row mb-0">
+            <label class="col-md-3 col-form-label">
+                {{ "Marka" | localize }}
+            </label>
+            <div class="col-md-9">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" name="brand" id="brand"
+                        [(ngModel)]="product.brand" />
+                    <label class="custom-control-label mt-2" for="brand"></label>
+                </div>
+            </div>
+        </div> -->
+    </div>
+    <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!editProductForm.form.valid || saving"
+        (onCancelClick)="bsModalRef.hide()"></abp-modal-footer>
+</form>

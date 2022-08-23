@@ -1,0 +1,94 @@
+<form class="form-horizontal" autocomplete="off" #createCustomerForm="ngForm" (ngSubmit)="save()">
+    <abp-modal-header [title]="'Create New Customer' | localize" (onCloseClick)="bsModalRef.hide()"></abp-modal-header>
+    <div class="modal-body">
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="customerCode">
+                {{ "Customer Code" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="customerCode" id="customerCode" minlength="2"
+                    maxlength="64" required [(ngModel)]="customer.customerCode" #customerCodeModel="ngModel"
+                    #customerCodeEl />
+                <abp-validation-summary [control]="customerCodeModel" [controlEl]="customerCodeEl">
+                </abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="title">
+                {{ "Title" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="title" id="title" maxlength="128" required
+                    [(ngModel)]="customer.title" #titleModel="ngModel" #titleEl />
+                <abp-validation-summary [control]="titleModel" [controlEl]="titleEl"></abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="taxNo">
+                {{ "Tax No" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="taxNo" id="taxNo" maxlength="128" required
+                    [(ngModel)]="customer.taxNo" #taxNoModel="ngModel" #taxNoEl />
+                <abp-validation-summary [control]="taxNoModel" [controlEl]="taxNoEl"></abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="taxOffice">
+                {{ "Tax Office" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="taxOffice" id="taxOffice" maxlength="128" required
+                    [(ngModel)]="customer.taxOffice" #taxOfficeModel="ngModel" #taxOfficeEl />
+                <abp-validation-summary [control]="taxOfficeModel" [controlEl]="taxOfficeEl"></abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="telephone">
+                {{ "Telephone" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="telephone" id="telephone" maxlength="128" required
+                    [(ngModel)]="customer.telephone" #telephoneModel="ngModel" #telephoneEl />
+                <abp-validation-summary [control]="telephoneModel" [controlEl]="telephoneEl"></abp-validation-summary>
+            </div>
+        </div>
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="email">
+                {{ "Email" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="email" id="email" maxlength="128" required
+                    [(ngModel)]="customer.email" #emailModel="ngModel" #emailEl />
+                <abp-validation-summary [control]="emailModel" [controlEl]="emailEl"></abp-validation-summary>
+            </div>
+        </div>
+
+        <!-- <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="marka">
+                {{ "DatabaseConnectionString" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="marka" id="marka" maxlength="1024"
+                    [(ngModel)]="product.marka" />
+            </div>
+        </div> -->
+        <!-- <div class="form-group row mb-0">
+            <label class="col-md-3 col-form-label">
+                {{ "IsActive" | localize }}
+            </label>
+            <div class="col-md-9">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" name="isActive" id="isActive"
+                        [(ngModel)]="tenant.isActive" />
+                    <label class="custom-control-label mt-2" for="isActive"></label>
+                </div>
+            </div>
+        </div> -->
+        <!-- <p class="text-center text-info mb-0">
+            {{ "DefaultPasswordIs" | localize: "123qwe" }}
+        </p> -->
+    </div>
+    <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!createCustomerForm.form.valid || saving"
+        (onCancelClick)="bsModalRef.hide()"></abp-modal-footer>
+</form>
