@@ -24,7 +24,7 @@ import { DocumentService } from '../../documents.service';
 
 class PagedProductRequestDto extends PagedRequestDto {
     keyword: string;
-    isActive: boolean | null;
+    isDeleted: boolean | null;
 }
 
 @Component({
@@ -37,7 +37,7 @@ export class ChooseProductDialogComponent extends PagedListingComponentBase<Prod
 
     saving = false;
     products: ProductDto[];
-    isActive: boolean | null;
+    isDeleted: boolean | null;
     keyword: string = "";
     advancedFiltersVisible = false;
     choosenProducts: ProductDto[] = [];
@@ -57,7 +57,6 @@ export class ChooseProductDialogComponent extends PagedListingComponentBase<Prod
     }
 
     ngOnInit(): void {
-        //this.product.isActive = true;
         this.refresh();
     }
 
@@ -83,13 +82,12 @@ export class ChooseProductDialogComponent extends PagedListingComponentBase<Prod
         finishedCallback: Function
     ): void {
         request.keyword = this.keyword;
-        //request.isActive = this.isActive;
+        request.isDeleted = this.isDeleted;
 
-        //console.log(request);
         this._productService
             .getAllProductsPaged(
                 request.keyword,
-                //request.isActive,
+                request.isDeleted,
                 request.skipCount,
                 request.maxResultCount
             )
@@ -100,7 +98,6 @@ export class ChooseProductDialogComponent extends PagedListingComponentBase<Prod
             )
             .subscribe((result: ProductDtoPagedResultDto) => {
                 this.products = result.items;
-                //console.log(this.documents);
                 this.showPaging(result, pageNumber);
             });
 
@@ -108,7 +105,7 @@ export class ChooseProductDialogComponent extends PagedListingComponentBase<Prod
 
     clearFilters(): void {
         this.keyword = '';
-        this.isActive = undefined;
+        this.isDeleted = undefined;
         this.getDataPage(1);
     }
 

@@ -19,7 +19,7 @@ import { EditWarehouseDialogComponent } from './edit-warehouse/edit-warehouse-di
 
 class PagedWarehouseRequestDto extends PagedRequestDto {
     keyword: string;
-    isActive: boolean | null;
+    isDeleted: boolean | null;
 }
 
 @Component({
@@ -29,7 +29,7 @@ class PagedWarehouseRequestDto extends PagedRequestDto {
 export class WarehousesComponent extends PagedListingComponentBase<WarehouseDto>{
     warehouses: WarehouseDto[] = [];
     keyword = '';
-    isActive: boolean | null;
+    isDeleted: boolean | null;
     advancedFiltersVisible = false;
     //totalCount: number;
     //itemsPerPage: number = 10;
@@ -49,13 +49,13 @@ export class WarehousesComponent extends PagedListingComponentBase<WarehouseDto>
         finishedCallback: Function
     ): void {
         request.keyword = this.keyword;
-        request.isActive = this.isActive;
+        request.isDeleted = this.isDeleted;
 
         //console.log(request);
         this._warehouseService
             .getAllWarehousesPaged(
                 request.keyword,
-                //request.isActive,
+                request.isDeleted,
                 request.skipCount,
                 request.maxResultCount
             )
@@ -127,7 +127,7 @@ export class WarehousesComponent extends PagedListingComponentBase<WarehouseDto>
 
     clearFilters(): void {
         this.keyword = '';
-        this.isActive = undefined;
+        this.isDeleted = undefined;
         this.getDataPage(1);
     }
 }

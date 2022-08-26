@@ -19,7 +19,7 @@ import { EditProductDialogComponent } from './edit-product/edit-product-dialog.c
 
 class PagedProductRequestDto extends PagedRequestDto {
     keyword: string;
-    isActive: boolean | null;
+    isDeleted: boolean | null;
 }
 
 @Component({
@@ -29,7 +29,7 @@ class PagedProductRequestDto extends PagedRequestDto {
 export class ProductsComponent extends PagedListingComponentBase<ProductDto>{
     products: ProductDto[] = [];
     keyword = '';
-    isActive: boolean | null;
+    isDeleted: boolean | null;
     advancedFiltersVisible = false;
     //totalCount: number;
     //itemsPerPage: number = 10;
@@ -49,13 +49,13 @@ export class ProductsComponent extends PagedListingComponentBase<ProductDto>{
         finishedCallback: Function
     ): void {
         request.keyword = this.keyword;
-        request.isActive = this.isActive;
+        request.isDeleted = this.isDeleted;
 
         //console.log(request);
         this._productService
             .getAllProductsPaged(
                 request.keyword,
-                //request.isActive,
+                request.isDeleted,
                 request.skipCount,
                 request.maxResultCount
             )
@@ -126,7 +126,7 @@ export class ProductsComponent extends PagedListingComponentBase<ProductDto>{
 
     clearFilters(): void {
         this.keyword = '';
-        this.isActive = undefined;
+        this.isDeleted = undefined;
         this.getDataPage(1);
     }
 }

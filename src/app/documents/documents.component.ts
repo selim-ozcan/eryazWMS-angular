@@ -8,8 +8,8 @@ import {
 } from '@shared/paged-listing-component-base';
 import {
     DocumentServiceProxy,
-    DocumentDto,
-    DocumentDtoPagedResultDto,
+    DocumentHeaderDto,
+    DocumentHeaderDtoPagedResultDto,
 } from '@shared/service-proxies/service-proxies';
 
 import { deleteElementAnimation } from '@shared/animations/deleteElementFromTable';
@@ -19,7 +19,7 @@ import { EditDocumentDialogComponent } from './edit-document/edit-document-dialo
 
 class PagedDocumentRequestDto extends PagedRequestDto {
     keyword: string;
-    isActive: boolean | null;
+    isDeleted: boolean | null;
 }
 
 @Component({
@@ -27,10 +27,10 @@ class PagedDocumentRequestDto extends PagedRequestDto {
     animations: [appModuleAnimation(), deleteElementAnimation(), addElementAnimation()],
     styleUrls: ['./documents.component.scss']
 })
-export class DocumentsComponent extends PagedListingComponentBase<DocumentDto>{
-    documents: DocumentDto[] = [];
+export class DocumentsComponent extends PagedListingComponentBase<DocumentHeaderDto>{
+    documents: DocumentHeaderDto[] = [];
     keyword = '';
-    isActive: boolean | null;
+    isDeleted: boolean | null;
     advancedFiltersVisible = false;
     //totalCount: number;
     //itemsPerPage: number = 10;
@@ -50,13 +50,13 @@ export class DocumentsComponent extends PagedListingComponentBase<DocumentDto>{
         finishedCallback: Function
     ): void {
         request.keyword = this.keyword;
-        request.isActive = this.isActive;
+        request.isDeleted = this.isDeleted;
 
         //console.log(request);
         this._documentService
-            .getAllDocumentsPaged(
+            .getAllDocumentHeadersPaged(
                 request.keyword,
-                //request.isActive,
+                request.isDeleted,
                 request.skipCount,
                 request.maxResultCount
             )
@@ -65,41 +65,40 @@ export class DocumentsComponent extends PagedListingComponentBase<DocumentDto>{
                     finishedCallback();
                 })
             )
-            .subscribe((result: DocumentDtoPagedResultDto) => {
+            .subscribe((result: DocumentHeaderDtoPagedResultDto) => {
                 this.documents = result.items;
-                //console.log(this.documents);
+                console.log(this.documents);
                 this.showPaging(result, pageNumber);
             });
     }
 
-    delete(document: DocumentDto): void {
-        abp.message.confirm(
-            //this.l('TenantDeleteWarningMessage', document.marka),
-            document.documentNumber + " evragi silinecektir",
-            undefined,
-            (result: boolean) => {
-                if (result) {
-                    this._documentService
-                        .deleteDocument(document.id)
-                        .pipe(
-                            finalize(() => {
-                                abp.notify.success(this.l('SuccessfullyDeleted'));
-                                this.refresh();
-                            })
-                        )
-                        .subscribe(() => { });
-                }
-            }
-        );
+    delete(document: DocumentHeaderDto): void {
+        // abp.message.confirm(
+        //     //this.l('TenantDeleteWarningMessage', document.marka),
+        //     document.documentNumber + " evragi silinecektir",
+        //     undefined,
+        //     (result: boolean) => {
+        //         if (result) {
+        //             this._documentService
+        //                 .deleteDocument(document.id)
+        //                 .pipe(
+        //                     finalize(() => {
+        //                         abp.notify.success(this.l('SuccessfullyDeleted'));
+        //                         this.refresh();
+        //                     })
+        //                 )
+        //                 .subscribe(() => { });
+        //         }
+        //     }
+        // );
     }
 
     createDocument(): void {
         this.showCreateOrEditDocumentDialog();
     }
 
-    editDocument(document: DocumentDto): void {
+    editDocument(document: DocumentHeaderDto): void {
         this.showCreateOrEditDocumentDialog(document.id);
-        //this._modalService.onShown.emit(document.documentNumber);
     }
 
     showCreateOrEditDocumentDialog(id?: number): void {
@@ -130,7 +129,7 @@ export class DocumentsComponent extends PagedListingComponentBase<DocumentDto>{
 
     clearFilters(): void {
         this.keyword = '';
-        this.isActive = undefined;
+        this.isDeleted = undefined;
         this.getDataPage(1);
     }
 }

@@ -1,4 +1,4 @@
-<form class="form-horizontal" autocomplete="off" #createMovementForm="ngForm" (ngSubmit)="save()">
+<!-- <form class="form-horizontal" autocomplete="off" #createMovementForm="ngForm" (ngSubmit)="save()">
     <abp-modal-header [title]="'Create New Movement' | localize" (onCloseClick)="bsModalRef.hide()"></abp-modal-header>
     <div class="modal-body">
         <div class="form-group row required">
@@ -18,7 +18,7 @@
             </label>
             <div class="col-md-9">
                 <input type="text" class="form-control" name="productCode" id="productCode" maxlength="128" required
-                    [(ngModel)]="movement.product.productCode" #productCodeModel="ngModel" #productCodeEl />
+                    [(ngModel)]="movement.productDto.productCode" #productCodeModel="ngModel" #productCodeEl />
                 <abp-validation-summary [control]="productCodeModel" [controlEl]="productCodeEl">
                 </abp-validation-summary>
             </div>
@@ -29,7 +29,7 @@
             </label>
             <div class="col-md-9">
                 <input type="text" class="form-control" name="productName" id="productName" maxlength="128" required
-                    [(ngModel)]="movement.product.productName" #productNameModel="ngModel" #productNameEl />
+                    [(ngModel)]="movement.productDto.productName" #productNameModel="ngModel" #productNameEl />
                 <abp-validation-summary [control]="productNameModel" [controlEl]="productNameEl">
                 </abp-validation-summary>
             </div>
@@ -51,7 +51,7 @@
             </label>
             <div class="col-md-9">
                 <input type="text" class="form-control" name="warehouse" id="warehouse" maxlength="128" required
-                    [(ngModel)]="movement.warehouse" #warehouseModel="ngModel" #warehouseEl />
+                    [(ngModel)]="movement.warehouseDto" #warehouseModel="ngModel" #warehouseEl />
                 <abp-validation-summary [control]="warehouseModel" [controlEl]="warehouseEl">
                 </abp-validation-summary>
             </div>
@@ -67,32 +67,7 @@
                 </abp-validation-summary>
             </div>
         </div>
-
-        <!-- <div class="form-group row">
-            <label class="col-md-3 col-form-label" for="productName">
-                {{ "DatabaseConnectionString" | localize }}
-            </label>
-            <div class="col-md-9">
-                <input type="text" class="form-control" name="productName" id="productName" maxlength="1024"
-                    [(ngModel)]="movement.productName" />
-            </div>
-        </div> -->
-        <!-- <div class="form-group row mb-0">
-            <label class="col-md-3 col-form-label">
-                {{ "IsActive" | localize }}
-            </label>
-            <div class="col-md-9">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" name="isActive" id="isActive"
-                        [(ngModel)]="tenant.isActive" />
-                    <label class="custom-control-label mt-2" for="isActive"></label>
-                </div>
-            </div>
-        </div> -->
-        <!-- <p class="text-center text-info mb-0">
-            {{ "DefaultPasswordIs" | localize: "123qwe" }}
-        </p> -->
     </div>
     <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!createMovementForm.form.valid || saving"
         (onCancelClick)="bsModalRef.hide()"></abp-modal-footer>
-</form>
+</form> -->

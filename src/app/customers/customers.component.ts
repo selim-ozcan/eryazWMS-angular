@@ -19,7 +19,7 @@ import { EditCustomerDialogComponent } from './edit-customer/edit-customer-dialo
 
 class PagedCustomerRequestDto extends PagedRequestDto {
   keyword: string;
-  isActive: boolean | null;
+  isDeleted: boolean | null;
 }
 
 @Component({
@@ -29,7 +29,7 @@ class PagedCustomerRequestDto extends PagedRequestDto {
 export class CustomersComponent extends PagedListingComponentBase<CustomerDto>{
   customers: CustomerDto[] = [];
   keyword = '';
-  isActive: boolean | null;
+  isDeleted: boolean | null = false;
   advancedFiltersVisible = false;
   //totalCount: number;
   //itemsPerPage: number = 10;
@@ -49,15 +49,14 @@ export class CustomersComponent extends PagedListingComponentBase<CustomerDto>{
     finishedCallback: Function
   ): void {
     request.keyword = this.keyword;
-    request.isActive = this.isActive;
+    request.isDeleted = this.isDeleted;
 
-    //console.log(request);
     this._customerService
       .getAllCustomersPaged(
         request.keyword,
-        //request.isActive,
+        request.isDeleted,
         request.skipCount,
-        request.maxResultCount
+        this.pageSize
       )
       .pipe(
         finalize(() => {
@@ -66,15 +65,13 @@ export class CustomersComponent extends PagedListingComponentBase<CustomerDto>{
       )
       .subscribe((result: CustomerDtoPagedResultDto) => {
         this.customers = result.items;
-        //console.log(this.customers);
         this.showPaging(result, pageNumber);
       });
   }
 
   delete(customer: CustomerDto): void {
     abp.message.confirm(
-      //this.l('TenantDeleteWarningMessage', customer.marka),
-      customer.title + " müşterisi silinecektir",
+      `${customer.title} müşterisi silinecektir`,
       undefined,
       (result: boolean) => {
         if (result) {
@@ -126,7 +123,7 @@ export class CustomersComponent extends PagedListingComponentBase<CustomerDto>{
 
   clearFilters(): void {
     this.keyword = '';
-    this.isActive = undefined;
+    this.isDeleted = undefined;
     this.getDataPage(1);
   }
 }

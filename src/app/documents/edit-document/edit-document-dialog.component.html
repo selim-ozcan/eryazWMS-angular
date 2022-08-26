@@ -1,17 +1,15 @@
-<form class="form-horizontal" autocomplete="off" #editProductForm="ngForm" (ngSubmit)="save()">
-    <abp-modal-header [title]="'Edit Document' | localize" (onCloseClick)="bsModalRef.hide()">
+<form class="form-horizontal" autocomplete="off" #editProductForm="ngForm" (ngSubmit)="''">
+    <abp-modal-header [title]="'Document Details' | localize" (onCloseClick)="bsModalRef.hide()">
     </abp-modal-header>
-    <div class="modal-body">
+    <div class="modal-body" [busy]="isTableLoading">
         <div class="form-group row">
             <label class="col-md-3 col-form-label" for="documentNumber">
                 {{ "Document Number" | localize }}
             </label>
             <div class="col-md-9">
                 <input type="text" class="form-control" name="documentNumber" id="documentNumber" minlength="2"
-                    maxlength="64" [(ngModel)]="document.documentNumber" #documentNumberModel="ngModel"
+                    maxlength="64" [(ngModel)]="documentHeader.documentNumber" #documentNumberModel="ngModel"
                     #documentNumberEl disabled />
-                <!-- <abp-validation-summary [control]="documentNumberModel" [controlEl]="documentNumberEl">
-                </abp-validation-summary> -->
             </div>
         </div>
         <div class="form-group row">
@@ -20,9 +18,7 @@
             </label>
             <div class="col-md-9">
                 <input type="text" class="form-control" name="documentDate" id="documentDate" maxlength="128"
-                    [(ngModel)]="document.documentDate" #documentDateModel="ngModel" #documentDateEl disabled />
-                <!-- <abp-validation-summary [control]="documentDateModel" [controlEl]="documentDateEl">
-                </abp-validation-summary> -->
+                    [(ngModel)]="documentHeader.documentDate" #documentDateModel="ngModel" #documentDateEl disabled />
             </div>
         </div>
         <div class="form-group row">
@@ -31,10 +27,18 @@
             </label>
             <div class="col-md-9">
                 <input type="text" class="form-control" name="registrationDate" id="registrationDate" maxlength="128"
-                    [(ngModel)]="document.registrationDate" #registrationDateModel="ngModel" #registrationDateEl
+                    [(ngModel)]="documentHeader.registrationDate" #registrationDateModel="ngModel" #registrationDateEl
                     disabled />
-                <!-- <abp-validation-summary [control]="registrationDateModel" [controlEl]="registrationDateEl">
-                </abp-validation-summary> -->
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-md-3 col-form-label" for="customerCode">
+                {{ "Customer Code" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="customerCode" id="customerCode" maxlength="128"
+                    [ngModel]="documentHeader?.customerDto?.customerCode" #customerCodeModel="ngModel" #customerCodeEl
+                    disabled />
             </div>
         </div>
 
@@ -42,38 +46,34 @@
             <table class="table table-striped table-bordered" [busy]="isTableLoading">
                 <thead class="bg-light">
                     <tr>
-                        <th>{{ "Customer Code" | localize }}</th>
                         <th>{{ "Product Code" | localize }}</th>
                         <th>{{ "Product Name" | localize }}</th>
                         <th>{{ "Brand" | localize }}</th>
-                        <th>{{ "Warehouse Name" | localize }}</th>
                         <th>{{ "Stock" | localize }}</th>
                         <th>{{ "Status" | localize }}</th>
 
-                        <th>{{ "Actions" | localize }}</th>
+                        <th style="width: 350px; text-align: center;">{{ "Actions" | localize }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="
-                    let movement of document.movements" [@elementDeletion]>
-                        <td>{{ document.customer.customerCode }}</td>
-                        <td>{{ movement.product.productCode }}</td>
-                        <td>{{ movement.product.productName }}</td>
-                        <td>{{ movement.product.brand }}</td>
-                        <td>{{ movement.warehouse.warehouseName }}</td>
-                        <th>{{ movement.stock }}</th>
-                        <th>{{ isMovementCompleted(movement) == true ? 'Main': 'Entrance'}}</th>
+                    let detail of documentDetails; let i = index" [@elementDeletion]>
+                        <td>{{ detail.productDto.productCode }}</td>
+                        <td>{{ detail.productDto.productName }}</td>
+                        <td>{{ detail.productDto.brand }}</td>
+                        <th>{{ detail.stock }}</th>
+                        <th>{{ detail.IsCompleted == true ? 'Main': 'Entrance'}}</th>
                         <td style="display: flex; justify-content: space-around;">
-                            <button [disabled]="isMovementCompleted(movement)" type="button"
-                                class="btn btn-sm bg-primary" (click)="completeMovement(movement)">
+                            <button [disabled]="detail.isCompleted" type="button" class="btn btn-sm bg-primary"
+                                (click)="completeDetail(detail)">
                                 <i class="fas fa-check"></i>
-                                {{ isMovementCompleted(movement) ? "Completed": "Complete" | localize }}
+                                {{ detail.isCompleted ? "Completed": "Complete" | localize }}
                             </button>
-                            <div *ngIf="!isMovementCompleted(movement)" style="display: flex; align-items:center">
+                            <div *ngIf="!detail.isCompleted" style="display: flex; align-items:center">
                                 <button
                                     style="border-top-right-radius: 0 !important; border-bottom-right-radius: 0 !important; margin-right: 0 !important"
                                     type="button" class="btn btn-sm bg-info mx-2"
-                                    (click)="updateMovement(movement, quantityUpdateInput)">
+                                    (click)="updateDetail(detail, quantityUpdateInput)">
                                     <i class="fas fa-eraser"></i>
                                     {{ "Update" | localize }}
                                 </button>
@@ -81,8 +81,8 @@
                                     style="display: inlie-block; width: 50px; height: 100%; border-bottom-left-radius: 1px; border-top-left-radius: 1px;" />
                             </div>
 
-                            <button *ngIf="!isMovementCompleted(movement)" type="button"
-                                class="btn btn-sm bg-danger mx-2" (click)="deleteMovement(movement)">
+                            <button *ngIf="!detail.isCompleted" type="button" class="btn btn-sm bg-danger mx-2"
+                                (click)="deleteDetail(detail)">
                                 <i class="fas fa-trash"></i>
                                 {{ "Delete" | localize }}
                             </button>
@@ -95,8 +95,5 @@
             <button type="button" class="btn btn-primary" style="text-align: center" [disabled]="!isDocumentCompletable"
                 (click)="finishDocument()">Finish</button>
         </div>
-
     </div>
-    <!-- <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!editProductForm.form.valid || saving"
-        (onCancelClick)="bsModalRef.hide()"></abp-modal-footer> -->
 </form>

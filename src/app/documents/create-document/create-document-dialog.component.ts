@@ -13,6 +13,8 @@ import {
     CustomerDto,
     CustomerDtoPagedResultDto,
     CustomerServiceProxy,
+    DocumentDetailDto,
+    DocumentHeaderDto,
     DocumentServiceProxy,
     ProductDto,
     ProductServiceProxy,
@@ -38,19 +40,24 @@ import { chooseProduct } from '@shared/animations/chooseProduct';
 export class CreateDocumentDialogComponent extends AppComponentBase
     implements OnInit, OnDestroy {
     saving = false;
+
     document: CreateDocumentDto = new CreateDocumentDto();
-    documentDate: string = "";
-    registrationDate: string = "";
+    // documentDate: string = "";
+    // registrationDate: string = "";
+
     customer: CustomerDto;
-    chooseCustomerDialog: BsModalRef;
-    chooseProductDialog: BsModalRef;
-    @Output() onSave = new EventEmitter<any>();
     customerSubscription: Subscription;
+
     products: ProductDto[] = [];
     productsSubscription: Subscription;
+
     choosenProductIds: number[];
     choosenProductsSubscription: Subscription
     stocks: number[];
+
+    chooseCustomerDialog: BsModalRef;
+    chooseProductDialog: BsModalRef;
+    @Output() onSave = new EventEmitter<any>();
 
     constructor(
         injector: Injector,
@@ -65,11 +72,9 @@ export class CreateDocumentDialogComponent extends AppComponentBase
     }
 
     ngOnInit(): void {
-        // onHidden veya onHide'a emitleyip subscribe olunca iki kere emit ediyor. sebebini anlamadım.
-        // this._modalService.onHidden.subscribe(customer => {
-        //     console.log(customer);
-        //     this.customer = customer;
-        // });
+        this.document.documentHeader = new DocumentHeaderDto();
+        this.document.documentDetails = [];
+
         this.customerSubscription = this._documentHelperService.customerObs.subscribe(customer =>
             this.customer = customer);
 
@@ -79,9 +84,7 @@ export class CreateDocumentDialogComponent extends AppComponentBase
         this.choosenProductsSubscription = this._documentHelperService.choosenProductsObs.subscribe(choosenProducts => {
             this.choosenProductIds = choosenProducts.products.map(p => p.id);
             this.stocks = choosenProducts.stocks;
-        }
-        );
-
+        });
     }
 
     ngOnDestroy(): void {
@@ -91,12 +94,27 @@ export class CreateDocumentDialogComponent extends AppComponentBase
 
     save(): void {
         this.saving = true;
-        this.document.documentDate = new Date(this.documentDate);
-        this.document.registrationDate = new Date(this.registrationDate);
-        this.document.customerId = this.customer.id;
-        this.document.productIds = this.choosenProductIds;
-        this.document.status = "BEKLEMEDE";
-        this.document.stocks = this.stocks;
+        // this.document.documentHeader.documentDate = new Date(this.documentDate);
+        // this.document.documentHeader.registrationDate = new Date(this.registrationDate);
+        this.document.documentHeader.customerDto = this.customer;
+        this.document.documentHeader.customerId = this.customer.id;
+        this.document.documentHeader.isCompleted = false;
+
+        let details: DocumentDetailDto[] = [];
+        for (let i = 0; i < this.choosenProductIds.length; i++) {
+            let detail = new DocumentDetailDto();
+            detail.init({
+                detailDate: new Date(this.document.documentHeader.registrationDate),
+                productId: this.choosenProductIds[i],
+                stock: this.stocks[i],
+                documentHeaderDto: this.document.documentHeader,
+                isCompleted: false
+            });
+            details.push(detail);
+        }
+
+        this.document.documentDetails = details;
+
         this._documentService.createDocument(this.document).subscribe(
             () => {
                 this.notify.info(this.l('SavedSuccessfully'));

@@ -7,8 +7,8 @@
             </label>
             <div class="col-md-9">
                 <input type="text" class="form-control" name="documentNumber" id="documentNumber" minlength="2"
-                    maxlength="64" required [(ngModel)]="document.documentNumber" #documentNumberModel="ngModel"
-                    #documentNumberEl />
+                    maxlength="64" required [(ngModel)]="document.documentHeader.documentNumber"
+                    #documentNumberModel="ngModel" #documentNumberEl />
                 <abp-validation-summary [control]="documentNumberModel" [controlEl]="documentNumberEl">
                 </abp-validation-summary>
             </div>
@@ -19,8 +19,8 @@
             </label>
             <div class="col-md-9">
                 <input type="text" class="form-control" name="documentDate" id="documentDate" maxlength="128" required
-                    [(ngModel)]="documentDate" #documentDateModel="ngModel" #documentDateEl bsDatepicker
-                    [bsConfig]="{ isAnimated: true }" />
+                    [(ngModel)]="document.documentHeader.documentDate" #documentDateModel="ngModel" #documentDateEl
+                    bsDatepicker [bsConfig]="{ isAnimated: true }" />
                 <abp-validation-summary [control]="documentDateModel" [controlEl]="documentDateEl ">
                 </abp-validation-summary>
             </div>
@@ -31,8 +31,8 @@
             </label>
             <div class="col-md-9">
                 <input type="text" class="form-control" name="registrationDate" id="registrationDate" maxlength="128"
-                    required [(ngModel)]="registrationDate" #registrationDateModel="ngModel" #registrationDateEl
-                    bsDatepicker [bsConfig]="{ isAnimated: true }" />
+                    required [(ngModel)]="document.documentHeader.registrationDate" #registrationDateModel="ngModel"
+                    #registrationDateEl bsDatepicker [bsConfig]="{ isAnimated: true }" />
                 <abp-validation-summary [control]="registrationDateModel" [controlEl]="registrationDateEl">
                 </abp-validation-summary>
             </div>
@@ -59,37 +59,6 @@
             </div>
         </div>
 
-        <!-- Müşteri seçildiyse listele -->
-        <!-- <div *ngIf="customer" class="customer-container">
-            <div class="col-md-12">
-                <div *ngFor="let prop of getCustomerProperties()" class="customer-row">
-                    <div class="property-name">{{ prop }}</div>
-                    <div class="property-value">{{ customer[prop] }}</div>
-                </div>
-            </div>
-        </div> -->
-        <!-- <div class="row" *ngIf="customer">
-            <div class="card">
-                <div class="card__side card__side--front">
-                    <div class="card__details">
-                        <ul>
-                            <li *ngFor="let prop of getCustomerProperties()"> {{customer[prop]}}</li>
-
-                        </ul>
-                    </div>
-                </div>
-                <div class="card__side card__side--back card__side--back-1">
-                    <div class="card__cta">
-                        <div class="card__price-box">
-                            <p class="card__price-only">Only</p>
-                            <p class="card__price-value">$297</p>
-                        </div>
-                        <a href="#popup" class="btn btn--white">Book now!</a>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
         <div class="form-group row required">
             <label class="col-md-3 col-form-label" for="customer">
                 {{ "Products" | localize }}
@@ -102,7 +71,7 @@
         </div>
 
         <!-- Product seçildiyse listele -->
-        <div *ngIf="customer" class="customer-container">
+        <!-- <div *ngIf="customer" class="customer-container">
             <div class="col-md-12">
                 <div *ngFor="let product of products">
                     <div *ngFor="let prop of getCustomerProperties()" class="customer-row">
@@ -111,7 +80,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
     <abp-modal-footer [cancelDisabled]="saving" [saveDisabled]="!createDocumentForm.form.valid || saving"
         (onCancelClick)="bsModalRef.hide()"></abp-modal-footer>

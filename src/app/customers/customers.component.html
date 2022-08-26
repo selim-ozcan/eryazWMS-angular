@@ -31,14 +31,13 @@
                                     [placeholder]="'SearchWithThreeDot' | localize" [(ngModel)]="keyword"
                                     (keyup.enter)="getDataPage(1)" />
 
-                                <!-- search bar yanındaki buton -->
-                                <!-- <div class="input-group-append">
+                                <div class="input-group-append">
                                     <button type="button" class="btn btn-default"
                                         (click)="advancedFiltersVisible = !advancedFiltersVisible">
                                         <i class="fas" [class.fa-angle-up]="advancedFiltersVisible"
                                             [class.fa-angle-down]="!advancedFiltersVisible"></i>
                                     </button>
-                                </div> -->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -49,29 +48,30 @@
                                     <div class="col-md-6">
                                         <div class="form-group row mb-0">
                                             <label class="col-md-3 col-form-label">
-                                                {{ "IsActive" | localize }}
+                                                {{ "Show Deleted" | localize }}
                                             </label>
                                             <div class="col-md-9 pt-2">
                                                 <div class="custom-control custom-radio d-inline">
-                                                    <input type="radio" class="custom-control-input" id="isActiveAll"
-                                                        name="isActive" [(ngModel)]="isActive" [value]="undefined"
+                                                    <input type="radio" class="custom-control-input" id="isDeletedAll"
+                                                        name="isDeleted" [(ngModel)]="isDeleted" [value]="undefined"
                                                         checked />
-                                                    <label class="custom-control-label" for="isActiveAll">
-                                                        {{ "All" | localize }}
+                                                    <label class="custom-control-label" for="isDeletedAll">
+                                                        {{ "Show All" | localize }}
                                                     </label>
                                                 </div>
                                                 <div class="custom-control custom-radio d-inline mx-3">
-                                                    <input type="radio" class="custom-control-input" id="isActiveActive"
-                                                        name="isActive" [(ngModel)]="isActive" [value]="true" />
-                                                    <label class="custom-control-label" for="isActiveActive">
+                                                    <input type="radio" class="custom-control-input"
+                                                        id="isDeletedDeleted" name="isDeleted" [(ngModel)]="isDeleted"
+                                                        [value]="true" />
+                                                    <label class="custom-control-label" for="isDeletedDeleted">
                                                         {{ "Yes" | localize }}
                                                     </label>
                                                 </div>
                                                 <div class="custom-control custom-radio d-inline">
                                                     <input type="radio" class="custom-control-input"
-                                                        id="isActivePassive" name="isActive" [(ngModel)]="isActive"
-                                                        [value]="false" />
-                                                    <label class="custom-control-label" for="isActivePassive">
+                                                        id="isDeletedNotDeleted" name="isDeleted"
+                                                        [(ngModel)]="isDeleted" [value]="false" />
+                                                    <label class="custom-control-label" for="isDeletedNotDeleted">
                                                         {{ "No" | localize }}
                                                     </label>
                                                 </div>

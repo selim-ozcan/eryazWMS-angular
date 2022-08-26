@@ -323,62 +323,6 @@ export class CustomerServiceProxy {
     }
 
     /**
-     * @param customerCode (optional) 
-     * @return Success
-     */
-    getCustomerWithCode(customerCode: string | undefined): Observable<CustomerDto> {
-        let url_ = this.baseUrl + "/api/services/app/Customer/GetCustomerWithCode?";
-        if (customerCode === null)
-            throw new Error("The parameter 'customerCode' cannot be null.");
-        else if (customerCode !== undefined)
-            url_ += "CustomerCode=" + encodeURIComponent("" + customerCode) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "text/plain"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetCustomerWithCode(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetCustomerWithCode(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<CustomerDto>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<CustomerDto>;
-        }));
-    }
-
-    protected processGetCustomerWithCode(response: HttpResponseBase): Observable<CustomerDto> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = CustomerDto.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<CustomerDto>(null as any);
-    }
-
-    /**
      * @return Success
      */
     getAllCustomers(): Observable<CustomerDto[]> {
@@ -438,16 +382,21 @@ export class CustomerServiceProxy {
 
     /**
      * @param keyword (optional) 
+     * @param includeDeleted (optional) 
      * @param skipCount (optional) 
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getAllCustomersPaged(keyword: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<CustomerDtoPagedResultDto> {
+    getAllCustomersPaged(keyword: string | undefined, includeDeleted: boolean | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<CustomerDtoPagedResultDto> {
         let url_ = this.baseUrl + "/api/services/app/Customer/GetAllCustomersPaged?";
         if (keyword === null)
             throw new Error("The parameter 'keyword' cannot be null.");
         else if (keyword !== undefined)
             url_ += "Keyword=" + encodeURIComponent("" + keyword) + "&";
+        if (includeDeleted === null)
+            throw new Error("The parameter 'includeDeleted' cannot be null.");
+        else if (includeDeleted !== undefined)
+            url_ += "IncludeDeleted=" + encodeURIComponent("" + includeDeleted) + "&";
         if (skipCount === null)
             throw new Error("The parameter 'skipCount' cannot be null.");
         else if (skipCount !== undefined)
@@ -674,8 +623,8 @@ export class DocumentServiceProxy {
      * @param id (optional) 
      * @return Success
      */
-    getDocument(id: number | undefined): Observable<DocumentDto> {
-        let url_ = this.baseUrl + "/api/services/app/Document/GetDocument?";
+    getDocumentHeader(id: number | undefined): Observable<DocumentHeaderDto> {
+        let url_ = this.baseUrl + "/api/services/app/Document/GetDocumentHeader?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
         else if (id !== undefined)
@@ -691,20 +640,20 @@ export class DocumentServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetDocument(response_);
+            return this.processGetDocumentHeader(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetDocument(response_ as any);
+                    return this.processGetDocumentHeader(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<DocumentDto>;
+                    return _observableThrow(e) as any as Observable<DocumentHeaderDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<DocumentDto>;
+                return _observableThrow(response_) as any as Observable<DocumentHeaderDto>;
         }));
     }
 
-    protected processGetDocument(response: HttpResponseBase): Observable<DocumentDto> {
+    protected processGetDocumentHeader(response: HttpResponseBase): Observable<DocumentHeaderDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -715,7 +664,7 @@ export class DocumentServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = DocumentDto.fromJS(resultData200);
+            result200 = DocumentHeaderDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -723,14 +672,14 @@ export class DocumentServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<DocumentDto>(null as any);
+        return _observableOf<DocumentHeaderDto>(null as any);
     }
 
     /**
      * @return Success
      */
-    getAllDocuments(): Observable<DocumentDto[]> {
-        let url_ = this.baseUrl + "/api/services/app/Document/GetAllDocuments";
+    getAllDocumentHeaders(): Observable<DocumentHeaderDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/Document/GetAllDocumentHeaders";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -742,20 +691,20 @@ export class DocumentServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetAllDocuments(response_);
+            return this.processGetAllDocumentHeaders(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetAllDocuments(response_ as any);
+                    return this.processGetAllDocumentHeaders(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<DocumentDto[]>;
+                    return _observableThrow(e) as any as Observable<DocumentHeaderDto[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<DocumentDto[]>;
+                return _observableThrow(response_) as any as Observable<DocumentHeaderDto[]>;
         }));
     }
 
-    protected processGetAllDocuments(response: HttpResponseBase): Observable<DocumentDto[]> {
+    protected processGetAllDocumentHeaders(response: HttpResponseBase): Observable<DocumentHeaderDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -769,7 +718,7 @@ export class DocumentServiceProxy {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200.push(DocumentDto.fromJS(item));
+                    result200.push(DocumentHeaderDto.fromJS(item));
             }
             else {
                 result200 = <any>null;
@@ -781,73 +730,26 @@ export class DocumentServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<DocumentDto[]>(null as any);
-    }
-
-    /**
-     * @param id (optional) 
-     * @return Success
-     */
-    deleteDocument(id: number | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Document/DeleteDocument?";
-        if (id === null)
-            throw new Error("The parameter 'id' cannot be null.");
-        else if (id !== undefined)
-            url_ += "id=" + encodeURIComponent("" + id) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-            })
-        };
-
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDeleteDocument(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processDeleteDocument(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<void>;
-        }));
-    }
-
-    protected processDeleteDocument(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(null as any);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(null as any);
+        return _observableOf<DocumentHeaderDto[]>(null as any);
     }
 
     /**
      * @param keyword (optional) 
+     * @param includeDeleted (optional) 
      * @param skipCount (optional) 
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getAllDocumentsPaged(keyword: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<DocumentDtoPagedResultDto> {
-        let url_ = this.baseUrl + "/api/services/app/Document/GetAllDocumentsPaged?";
+    getAllDocumentHeadersPaged(keyword: string | undefined, includeDeleted: boolean | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<DocumentHeaderDtoPagedResultDto> {
+        let url_ = this.baseUrl + "/api/services/app/Document/GetAllDocumentHeadersPaged?";
         if (keyword === null)
             throw new Error("The parameter 'keyword' cannot be null.");
         else if (keyword !== undefined)
             url_ += "Keyword=" + encodeURIComponent("" + keyword) + "&";
+        if (includeDeleted === null)
+            throw new Error("The parameter 'includeDeleted' cannot be null.");
+        else if (includeDeleted !== undefined)
+            url_ += "IncludeDeleted=" + encodeURIComponent("" + includeDeleted) + "&";
         if (skipCount === null)
             throw new Error("The parameter 'skipCount' cannot be null.");
         else if (skipCount !== undefined)
@@ -867,20 +769,20 @@ export class DocumentServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetAllDocumentsPaged(response_);
+            return this.processGetAllDocumentHeadersPaged(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetAllDocumentsPaged(response_ as any);
+                    return this.processGetAllDocumentHeadersPaged(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<DocumentDtoPagedResultDto>;
+                    return _observableThrow(e) as any as Observable<DocumentHeaderDtoPagedResultDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<DocumentDtoPagedResultDto>;
+                return _observableThrow(response_) as any as Observable<DocumentHeaderDtoPagedResultDto>;
         }));
     }
 
-    protected processGetAllDocumentsPaged(response: HttpResponseBase): Observable<DocumentDtoPagedResultDto> {
+    protected processGetAllDocumentHeadersPaged(response: HttpResponseBase): Observable<DocumentHeaderDtoPagedResultDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -891,7 +793,7 @@ export class DocumentServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = DocumentDtoPagedResultDto.fromJS(resultData200);
+            result200 = DocumentHeaderDtoPagedResultDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -899,75 +801,19 @@ export class DocumentServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<DocumentDtoPagedResultDto>(null as any);
+        return _observableOf<DocumentHeaderDtoPagedResultDto>(null as any);
     }
 
     /**
-     * @param body (optional) 
+     * @param documentHeaderId (optional) 
      * @return Success
      */
-    updateDocument(body: DocumentDto | undefined): Observable<DocumentDto> {
-        let url_ = this.baseUrl + "/api/services/app/Document/UpdateDocument";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json-patch+json",
-                "Accept": "text/plain"
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateDocument(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateDocument(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<DocumentDto>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<DocumentDto>;
-        }));
-    }
-
-    protected processUpdateDocument(response: HttpResponseBase): Observable<DocumentDto> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = DocumentDto.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<DocumentDto>(null as any);
-    }
-
-    /**
-     * @param customerId (optional) 
-     * @return Success
-     */
-    getDocumentListByCustomer(customerId: number | undefined): Observable<DocumentDto[]> {
-        let url_ = this.baseUrl + "/api/services/app/Document/GetDocumentListByCustomer?";
-        if (customerId === null)
-            throw new Error("The parameter 'customerId' cannot be null.");
-        else if (customerId !== undefined)
-            url_ += "customerId=" + encodeURIComponent("" + customerId) + "&";
+    getDetailsOfDocument(documentHeaderId: number | undefined): Observable<DocumentDetailDto[]> {
+        let url_ = this.baseUrl + "/api/services/app/Document/GetDetailsOfDocument?";
+        if (documentHeaderId === null)
+            throw new Error("The parameter 'documentHeaderId' cannot be null.");
+        else if (documentHeaderId !== undefined)
+            url_ += "documentHeaderId=" + encodeURIComponent("" + documentHeaderId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -979,20 +825,20 @@ export class DocumentServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetDocumentListByCustomer(response_);
+            return this.processGetDetailsOfDocument(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetDocumentListByCustomer(response_ as any);
+                    return this.processGetDetailsOfDocument(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<DocumentDto[]>;
+                    return _observableThrow(e) as any as Observable<DocumentDetailDto[]>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<DocumentDto[]>;
+                return _observableThrow(response_) as any as Observable<DocumentDetailDto[]>;
         }));
     }
 
-    protected processGetDocumentListByCustomer(response: HttpResponseBase): Observable<DocumentDto[]> {
+    protected processGetDetailsOfDocument(response: HttpResponseBase): Observable<DocumentDetailDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1006,7 +852,7 @@ export class DocumentServiceProxy {
             if (Array.isArray(resultData200)) {
                 result200 = [] as any;
                 for (let item of resultData200)
-                    result200.push(DocumentDto.fromJS(item));
+                    result200.push(DocumentDetailDto.fromJS(item));
             }
             else {
                 result200 = <any>null;
@@ -1018,24 +864,24 @@ export class DocumentServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<DocumentDto[]>(null as any);
+        return _observableOf<DocumentDetailDto[]>(null as any);
     }
 
     /**
-     * @param documentId (optional) 
-     * @param movementId (optional) 
+     * @param documentHeaderId (optional) 
+     * @param detailId (optional) 
      * @return Success
      */
-    deleteMovementFromDocument(documentId: number | undefined, movementId: number | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Document/DeleteMovementFromDocument?";
-        if (documentId === null)
-            throw new Error("The parameter 'documentId' cannot be null.");
-        else if (documentId !== undefined)
-            url_ += "documentId=" + encodeURIComponent("" + documentId) + "&";
-        if (movementId === null)
-            throw new Error("The parameter 'movementId' cannot be null.");
-        else if (movementId !== undefined)
-            url_ += "movementId=" + encodeURIComponent("" + movementId) + "&";
+    completeDetailOfDocument(documentHeaderId: number | undefined, detailId: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Document/CompleteDetailOfDocument?";
+        if (documentHeaderId === null)
+            throw new Error("The parameter 'documentHeaderId' cannot be null.");
+        else if (documentHeaderId !== undefined)
+            url_ += "documentHeaderId=" + encodeURIComponent("" + documentHeaderId) + "&";
+        if (detailId === null)
+            throw new Error("The parameter 'detailId' cannot be null.");
+        else if (detailId !== undefined)
+            url_ += "detailId=" + encodeURIComponent("" + detailId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1045,12 +891,12 @@ export class DocumentServiceProxy {
             })
         };
 
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDeleteMovementFromDocument(response_);
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCompleteDetailOfDocument(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processDeleteMovementFromDocument(response_ as any);
+                    return this.processCompleteDetailOfDocument(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<void>;
                 }
@@ -1059,7 +905,7 @@ export class DocumentServiceProxy {
         }));
     }
 
-    protected processDeleteMovementFromDocument(response: HttpResponseBase): Observable<void> {
+    protected processCompleteDetailOfDocument(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1079,21 +925,78 @@ export class DocumentServiceProxy {
     }
 
     /**
-     * @param documentId (optional) 
-     * @param movementId (optional) 
+     * @param documentHeaderId (optional) 
+     * @param detailId (optional) 
+     * @return Success
+     */
+    deleteDetailFromDocument(documentHeaderId: number | undefined, detailId: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Document/DeleteDetailFromDocument?";
+        if (documentHeaderId === null)
+            throw new Error("The parameter 'documentHeaderId' cannot be null.");
+        else if (documentHeaderId !== undefined)
+            url_ += "documentHeaderId=" + encodeURIComponent("" + documentHeaderId) + "&";
+        if (detailId === null)
+            throw new Error("The parameter 'detailId' cannot be null.");
+        else if (detailId !== undefined)
+            url_ += "detailId=" + encodeURIComponent("" + detailId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteDetailFromDocument(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteDetailFromDocument(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processDeleteDetailFromDocument(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param documentHeaderId (optional) 
+     * @param detailId (optional) 
      * @param stock (optional) 
      * @return Success
      */
-    updateMovementOfDocument(documentId: number | undefined, movementId: number | undefined, stock: number | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Document/UpdateMovementOfDocument?";
-        if (documentId === null)
-            throw new Error("The parameter 'documentId' cannot be null.");
-        else if (documentId !== undefined)
-            url_ += "documentId=" + encodeURIComponent("" + documentId) + "&";
-        if (movementId === null)
-            throw new Error("The parameter 'movementId' cannot be null.");
-        else if (movementId !== undefined)
-            url_ += "movementId=" + encodeURIComponent("" + movementId) + "&";
+    updateDetailOfDocument(documentHeaderId: number | undefined, detailId: number | undefined, stock: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/app/Document/UpdateDetailOfDocument?";
+        if (documentHeaderId === null)
+            throw new Error("The parameter 'documentHeaderId' cannot be null.");
+        else if (documentHeaderId !== undefined)
+            url_ += "documentHeaderId=" + encodeURIComponent("" + documentHeaderId) + "&";
+        if (detailId === null)
+            throw new Error("The parameter 'detailId' cannot be null.");
+        else if (detailId !== undefined)
+            url_ += "detailId=" + encodeURIComponent("" + detailId) + "&";
         if (stock === null)
             throw new Error("The parameter 'stock' cannot be null.");
         else if (stock !== undefined)
@@ -1108,11 +1011,11 @@ export class DocumentServiceProxy {
         };
 
         return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateMovementOfDocument(response_);
+            return this.processUpdateDetailOfDocument(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processUpdateMovementOfDocument(response_ as any);
+                    return this.processUpdateDetailOfDocument(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<void>;
                 }
@@ -1121,7 +1024,7 @@ export class DocumentServiceProxy {
         }));
     }
 
-    protected processUpdateMovementOfDocument(response: HttpResponseBase): Observable<void> {
+    protected processUpdateDetailOfDocument(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1141,72 +1044,15 @@ export class DocumentServiceProxy {
     }
 
     /**
-     * @param documentId (optional) 
-     * @param movementId (optional) 
+     * @param documentHeaderId (optional) 
      * @return Success
      */
-    completeMovementOfDocument(documentId: number | undefined, movementId: number | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/app/Document/CompleteMovementOfDocument?";
-        if (documentId === null)
-            throw new Error("The parameter 'documentId' cannot be null.");
-        else if (documentId !== undefined)
-            url_ += "documentId=" + encodeURIComponent("" + documentId) + "&";
-        if (movementId === null)
-            throw new Error("The parameter 'movementId' cannot be null.");
-        else if (movementId !== undefined)
-            url_ += "movementId=" + encodeURIComponent("" + movementId) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCompleteMovementOfDocument(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCompleteMovementOfDocument(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<void>;
-        }));
-    }
-
-    protected processCompleteMovementOfDocument(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(null as any);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(null as any);
-    }
-
-    /**
-     * @param documentId (optional) 
-     * @return Success
-     */
-    finishDocument(documentId: number | undefined): Observable<void> {
+    finishDocument(documentHeaderId: number | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/app/Document/FinishDocument?";
-        if (documentId === null)
-            throw new Error("The parameter 'documentId' cannot be null.");
-        else if (documentId !== undefined)
-            url_ += "documentId=" + encodeURIComponent("" + documentId) + "&";
+        if (documentHeaderId === null)
+            throw new Error("The parameter 'documentHeaderId' cannot be null.");
+        else if (documentHeaderId !== undefined)
+            url_ += "documentHeaderId=" + encodeURIComponent("" + documentHeaderId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1429,16 +1275,21 @@ export class MovementServiceProxy {
 
     /**
      * @param keyword (optional) 
+     * @param includeDeleted (optional) 
      * @param skipCount (optional) 
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getAllMovementsPaged(keyword: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<MovementDtoPagedResultDto> {
+    getAllMovementsPaged(keyword: string | undefined, includeDeleted: boolean | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<MovementDtoPagedResultDto> {
         let url_ = this.baseUrl + "/api/services/app/Movement/GetAllMovementsPaged?";
         if (keyword === null)
             throw new Error("The parameter 'keyword' cannot be null.");
         else if (keyword !== undefined)
             url_ += "Keyword=" + encodeURIComponent("" + keyword) + "&";
+        if (includeDeleted === null)
+            throw new Error("The parameter 'includeDeleted' cannot be null.");
+        else if (includeDeleted !== undefined)
+            url_ += "IncludeDeleted=" + encodeURIComponent("" + includeDeleted) + "&";
         if (skipCount === null)
             throw new Error("The parameter 'skipCount' cannot be null.");
         else if (skipCount !== undefined)
@@ -1566,7 +1417,7 @@ export class ProductServiceProxy {
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
         else if (id !== undefined)
-            url_ += "id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1673,16 +1524,21 @@ export class ProductServiceProxy {
 
     /**
      * @param keyword (optional) 
+     * @param includeDeleted (optional) 
      * @param skipCount (optional) 
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getAllProductsPaged(keyword: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<ProductDtoPagedResultDto> {
+    getAllProductsPaged(keyword: string | undefined, includeDeleted: boolean | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<ProductDtoPagedResultDto> {
         let url_ = this.baseUrl + "/api/services/app/Product/GetAllProductsPaged?";
         if (keyword === null)
             throw new Error("The parameter 'keyword' cannot be null.");
         else if (keyword !== undefined)
             url_ += "Keyword=" + encodeURIComponent("" + keyword) + "&";
+        if (includeDeleted === null)
+            throw new Error("The parameter 'includeDeleted' cannot be null.");
+        else if (includeDeleted !== undefined)
+            url_ += "IncludeDeleted=" + encodeURIComponent("" + includeDeleted) + "&";
         if (skipCount === null)
             throw new Error("The parameter 'skipCount' cannot be null.");
         else if (skipCount !== undefined)
@@ -3547,7 +3403,7 @@ export class WarehouseServiceProxy {
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
         else if (id !== undefined)
-            url_ += "id=" + encodeURIComponent("" + id) + "&";
+            url_ += "Id=" + encodeURIComponent("" + id) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -3654,16 +3510,21 @@ export class WarehouseServiceProxy {
 
     /**
      * @param keyword (optional) 
+     * @param includeDeleted (optional) 
      * @param skipCount (optional) 
      * @param maxResultCount (optional) 
      * @return Success
      */
-    getAllWarehousesPaged(keyword: string | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<WarehouseDtoPagedResultDto> {
+    getAllWarehousesPaged(keyword: string | undefined, includeDeleted: boolean | undefined, skipCount: number | undefined, maxResultCount: number | undefined): Observable<WarehouseDtoPagedResultDto> {
         let url_ = this.baseUrl + "/api/services/app/Warehouse/GetAllWarehousesPaged?";
         if (keyword === null)
             throw new Error("The parameter 'keyword' cannot be null.");
         else if (keyword !== undefined)
             url_ += "Keyword=" + encodeURIComponent("" + keyword) + "&";
+        if (includeDeleted === null)
+            throw new Error("The parameter 'includeDeleted' cannot be null.");
+        else if (includeDeleted !== undefined)
+            url_ += "IncludeDeleted=" + encodeURIComponent("" + includeDeleted) + "&";
         if (skipCount === null)
             throw new Error("The parameter 'skipCount' cannot be null.");
         else if (skipCount !== undefined)
@@ -4126,7 +3987,6 @@ export interface IChangeUserLanguageDto {
 }
 
 export class CreateCustomerDto implements ICreateCustomerDto {
-    id: number;
     customerCode: string | undefined;
     title: string | undefined;
     taxNo: string | undefined;
@@ -4145,7 +4005,6 @@ export class CreateCustomerDto implements ICreateCustomerDto {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"];
             this.customerCode = _data["customerCode"];
             this.title = _data["title"];
             this.taxNo = _data["taxNo"];
@@ -4164,7 +4023,6 @@ export class CreateCustomerDto implements ICreateCustomerDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
         data["customerCode"] = this.customerCode;
         data["title"] = this.title;
         data["taxNo"] = this.taxNo;
@@ -4183,7 +4041,6 @@ export class CreateCustomerDto implements ICreateCustomerDto {
 }
 
 export interface ICreateCustomerDto {
-    id: number;
     customerCode: string | undefined;
     title: string | undefined;
     taxNo: string | undefined;
@@ -4193,14 +4050,8 @@ export interface ICreateCustomerDto {
 }
 
 export class CreateDocumentDto implements ICreateDocumentDto {
-    id: number;
-    documentNumber: string | undefined;
-    documentDate: Date | undefined;
-    registrationDate: Date | undefined;
-    status: string | undefined;
-    customerId: number;
-    productIds: number[] | undefined;
-    stocks: number[] | undefined;
+    documentHeader: DocumentHeaderDto;
+    documentDetails: DocumentDetailDto[] | undefined;
 
     constructor(data?: ICreateDocumentDto) {
         if (data) {
@@ -4213,21 +4064,11 @@ export class CreateDocumentDto implements ICreateDocumentDto {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"];
-            this.documentNumber = _data["documentNumber"];
-            this.documentDate = _data["documentDate"] ? new Date(_data["documentDate"].toString()) : <any>undefined;
-            this.registrationDate = _data["registrationDate"] ? new Date(_data["registrationDate"].toString()) : <any>undefined;
-            this.status = _data["status"];
-            this.customerId = _data["customerId"];
-            if (Array.isArray(_data["productIds"])) {
-                this.productIds = [] as any;
-                for (let item of _data["productIds"])
-                    this.productIds.push(item);
-            }
-            if (Array.isArray(_data["stocks"])) {
-                this.stocks = [] as any;
-                for (let item of _data["stocks"])
-                    this.stocks.push(item);
+            this.documentHeader = _data["documentHeader"] ? DocumentHeaderDto.fromJS(_data["documentHeader"]) : <any>undefined;
+            if (Array.isArray(_data["documentDetails"])) {
+                this.documentDetails = [] as any;
+                for (let item of _data["documentDetails"])
+                    this.documentDetails.push(DocumentDetailDto.fromJS(item));
             }
         }
     }
@@ -4241,21 +4082,11 @@ export class CreateDocumentDto implements ICreateDocumentDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["documentNumber"] = this.documentNumber;
-        data["documentDate"] = this.documentDate ? this.documentDate.toISOString() : <any>undefined;
-        data["registrationDate"] = this.registrationDate ? this.registrationDate.toISOString() : <any>undefined;
-        data["status"] = this.status;
-        data["customerId"] = this.customerId;
-        if (Array.isArray(this.productIds)) {
-            data["productIds"] = [];
-            for (let item of this.productIds)
-                data["productIds"].push(item);
-        }
-        if (Array.isArray(this.stocks)) {
-            data["stocks"] = [];
-            for (let item of this.stocks)
-                data["stocks"].push(item);
+        data["documentHeader"] = this.documentHeader ? this.documentHeader.toJSON() : <any>undefined;
+        if (Array.isArray(this.documentDetails)) {
+            data["documentDetails"] = [];
+            for (let item of this.documentDetails)
+                data["documentDetails"].push(item.toJSON());
         }
         return data;
     }
@@ -4269,23 +4100,17 @@ export class CreateDocumentDto implements ICreateDocumentDto {
 }
 
 export interface ICreateDocumentDto {
-    id: number;
-    documentNumber: string | undefined;
-    documentDate: Date | undefined;
-    registrationDate: Date | undefined;
-    status: string | undefined;
-    customerId: number;
-    productIds: number[] | undefined;
-    stocks: number[] | undefined;
+    documentHeader: DocumentHeaderDto;
+    documentDetails: DocumentDetailDto[] | undefined;
 }
 
 export class CreateMovementDto implements ICreateMovementDto {
-    id: number;
     movementDate: Date;
-    product: Product;
     movementType: MovementType;
-    warehouse: Warehouse;
+    productDto: ProductDto;
+    productId: number;
     stock: number;
+    warehouseId: number;
 
     constructor(data?: ICreateMovementDto) {
         if (data) {
@@ -4298,12 +4123,12 @@ export class CreateMovementDto implements ICreateMovementDto {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"];
             this.movementDate = _data["movementDate"] ? new Date(_data["movementDate"].toString()) : <any>undefined;
-            this.product = _data["product"] ? Product.fromJS(_data["product"]) : <any>undefined;
             this.movementType = _data["movementType"];
-            this.warehouse = _data["warehouse"] ? Warehouse.fromJS(_data["warehouse"]) : <any>undefined;
+            this.productDto = _data["productDto"] ? ProductDto.fromJS(_data["productDto"]) : <any>undefined;
+            this.productId = _data["productId"];
             this.stock = _data["stock"];
+            this.warehouseId = _data["warehouseId"];
         }
     }
 
@@ -4316,12 +4141,12 @@ export class CreateMovementDto implements ICreateMovementDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
         data["movementDate"] = this.movementDate ? this.movementDate.toISOString() : <any>undefined;
-        data["product"] = this.product ? this.product.toJSON() : <any>undefined;
         data["movementType"] = this.movementType;
-        data["warehouse"] = this.warehouse ? this.warehouse.toJSON() : <any>undefined;
+        data["productDto"] = this.productDto ? this.productDto.toJSON() : <any>undefined;
+        data["productId"] = this.productId;
         data["stock"] = this.stock;
+        data["warehouseId"] = this.warehouseId;
         return data;
     }
 
@@ -4334,16 +4159,15 @@ export class CreateMovementDto implements ICreateMovementDto {
 }
 
 export interface ICreateMovementDto {
-    id: number;
     movementDate: Date;
-    product: Product;
     movementType: MovementType;
-    warehouse: Warehouse;
+    productDto: ProductDto;
+    productId: number;
     stock: number;
+    warehouseId: number;
 }
 
 export class CreateProductDto implements ICreateProductDto {
-    id: number;
     productCode: string | undefined;
     productName: string | undefined;
     brand: string | undefined;
@@ -4359,7 +4183,6 @@ export class CreateProductDto implements ICreateProductDto {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"];
             this.productCode = _data["productCode"];
             this.productName = _data["productName"];
             this.brand = _data["brand"];
@@ -4375,7 +4198,6 @@ export class CreateProductDto implements ICreateProductDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
         data["productCode"] = this.productCode;
         data["productName"] = this.productName;
         data["brand"] = this.brand;
@@ -4391,7 +4213,6 @@ export class CreateProductDto implements ICreateProductDto {
 }
 
 export interface ICreateProductDto {
-    id: number;
     productCode: string | undefined;
     productName: string | undefined;
     brand: string | undefined;
@@ -4599,7 +4420,6 @@ export interface ICreateUserDto {
 }
 
 export class CreateWarehouseDto implements ICreateWarehouseDto {
-    id: number;
     warehouseCode: string | undefined;
     warehouseName: string | undefined;
     warehouseType: WarehouseType;
@@ -4615,7 +4435,6 @@ export class CreateWarehouseDto implements ICreateWarehouseDto {
 
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"];
             this.warehouseCode = _data["warehouseCode"];
             this.warehouseName = _data["warehouseName"];
             this.warehouseType = _data["warehouseType"];
@@ -4631,7 +4450,6 @@ export class CreateWarehouseDto implements ICreateWarehouseDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
         data["warehouseCode"] = this.warehouseCode;
         data["warehouseName"] = this.warehouseName;
         data["warehouseType"] = this.warehouseType;
@@ -4647,81 +4465,9 @@ export class CreateWarehouseDto implements ICreateWarehouseDto {
 }
 
 export interface ICreateWarehouseDto {
-    id: number;
     warehouseCode: string | undefined;
     warehouseName: string | undefined;
     warehouseType: WarehouseType;
-}
-
-export class Customer implements ICustomer {
-    id: number;
-    customerCode: string | undefined;
-    title: string | undefined;
-    taxNo: string | undefined;
-    taxOffice: string | undefined;
-    telephone: string | undefined;
-    email: string | undefined;
-    isDeleted: boolean;
-
-    constructor(data?: ICustomer) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.customerCode = _data["customerCode"];
-            this.title = _data["title"];
-            this.taxNo = _data["taxNo"];
-            this.taxOffice = _data["taxOffice"];
-            this.telephone = _data["telephone"];
-            this.email = _data["email"];
-            this.isDeleted = _data["isDeleted"];
-        }
-    }
-
-    static fromJS(data: any): Customer {
-        data = typeof data === 'object' ? data : {};
-        let result = new Customer();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["customerCode"] = this.customerCode;
-        data["title"] = this.title;
-        data["taxNo"] = this.taxNo;
-        data["taxOffice"] = this.taxOffice;
-        data["telephone"] = this.telephone;
-        data["email"] = this.email;
-        data["isDeleted"] = this.isDeleted;
-        return data;
-    }
-
-    clone(): Customer {
-        const json = this.toJSON();
-        let result = new Customer();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface ICustomer {
-    id: number;
-    customerCode: string | undefined;
-    title: string | undefined;
-    taxNo: string | undefined;
-    taxOffice: string | undefined;
-    telephone: string | undefined;
-    email: string | undefined;
-    isDeleted: boolean;
 }
 
 export class CustomerDto implements ICustomerDto {
@@ -4846,17 +4592,83 @@ export interface ICustomerDtoPagedResultDto {
     totalCount: number;
 }
 
-export class DocumentDto implements IDocumentDto {
+export class DocumentDetailDto implements IDocumentDetailDto {
+    id: number;
+    detailDate: Date;
+    productDto: ProductDto;
+    productId: number;
+    stock: number;
+    documentHeaderDto: DocumentHeaderDto;
+    isCompleted: boolean;
+
+    constructor(data?: IDocumentDetailDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.detailDate = _data["detailDate"] ? new Date(_data["detailDate"].toString()) : <any>undefined;
+            this.productDto = _data["productDto"] ? ProductDto.fromJS(_data["productDto"]) : <any>undefined;
+            this.productId = _data["productId"];
+            this.stock = _data["stock"];
+            this.documentHeaderDto = _data["documentHeaderDto"] ? DocumentHeaderDto.fromJS(_data["documentHeaderDto"]) : <any>undefined;
+            this.isCompleted = _data["isCompleted"];
+        }
+    }
+
+    static fromJS(data: any): DocumentDetailDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new DocumentDetailDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["detailDate"] = this.detailDate ? this.detailDate.toISOString() : <any>undefined;
+        data["productDto"] = this.productDto ? this.productDto.toJSON() : <any>undefined;
+        data["productId"] = this.productId;
+        data["stock"] = this.stock;
+        data["documentHeaderDto"] = this.documentHeaderDto ? this.documentHeaderDto.toJSON() : <any>undefined;
+        data["isCompleted"] = this.isCompleted;
+        return data;
+    }
+
+    clone(): DocumentDetailDto {
+        const json = this.toJSON();
+        let result = new DocumentDetailDto();
+        result.init(json);
+        return result;
+    }
+}
+
+export interface IDocumentDetailDto {
+    id: number;
+    detailDate: Date;
+    productDto: ProductDto;
+    productId: number;
+    stock: number;
+    documentHeaderDto: DocumentHeaderDto;
+    isCompleted: boolean;
+}
+
+export class DocumentHeaderDto implements IDocumentHeaderDto {
     id: number;
     documentNumber: string | undefined;
     documentDate: Date;
     registrationDate: Date;
-    status: string | undefined;
-    customer: Customer;
-    movements: Movement[] | undefined;
-    movementStatuses: DocumentMovementStatus[] | undefined;
+    customerDto: CustomerDto;
+    customerId: number;
+    isCompleted: boolean;
 
-    constructor(data?: IDocumentDto) {
+    constructor(data?: IDocumentHeaderDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4871,24 +4683,15 @@ export class DocumentDto implements IDocumentDto {
             this.documentNumber = _data["documentNumber"];
             this.documentDate = _data["documentDate"] ? new Date(_data["documentDate"].toString()) : <any>undefined;
             this.registrationDate = _data["registrationDate"] ? new Date(_data["registrationDate"].toString()) : <any>undefined;
-            this.status = _data["status"];
-            this.customer = _data["customer"] ? Customer.fromJS(_data["customer"]) : <any>undefined;
-            if (Array.isArray(_data["movements"])) {
-                this.movements = [] as any;
-                for (let item of _data["movements"])
-                    this.movements.push(Movement.fromJS(item));
-            }
-            if (Array.isArray(_data["movementStatuses"])) {
-                this.movementStatuses = [] as any;
-                for (let item of _data["movementStatuses"])
-                    this.movementStatuses.push(DocumentMovementStatus.fromJS(item));
-            }
+            this.customerDto = _data["customerDto"] ? CustomerDto.fromJS(_data["customerDto"]) : <any>undefined;
+            this.customerId = _data["customerId"];
+            this.isCompleted = _data["isCompleted"];
         }
     }
 
-    static fromJS(data: any): DocumentDto {
+    static fromJS(data: any): DocumentHeaderDto {
         data = typeof data === 'object' ? data : {};
-        let result = new DocumentDto();
+        let result = new DocumentHeaderDto();
         result.init(data);
         return result;
     }
@@ -4899,45 +4702,35 @@ export class DocumentDto implements IDocumentDto {
         data["documentNumber"] = this.documentNumber;
         data["documentDate"] = this.documentDate ? this.documentDate.toISOString() : <any>undefined;
         data["registrationDate"] = this.registrationDate ? this.registrationDate.toISOString() : <any>undefined;
-        data["status"] = this.status;
-        data["customer"] = this.customer ? this.customer.toJSON() : <any>undefined;
-        if (Array.isArray(this.movements)) {
-            data["movements"] = [];
-            for (let item of this.movements)
-                data["movements"].push(item.toJSON());
-        }
-        if (Array.isArray(this.movementStatuses)) {
-            data["movementStatuses"] = [];
-            for (let item of this.movementStatuses)
-                data["movementStatuses"].push(item.toJSON());
-        }
+        data["customerDto"] = this.customerDto ? this.customerDto.toJSON() : <any>undefined;
+        data["customerId"] = this.customerId;
+        data["isCompleted"] = this.isCompleted;
         return data;
     }
 
-    clone(): DocumentDto {
+    clone(): DocumentHeaderDto {
         const json = this.toJSON();
-        let result = new DocumentDto();
+        let result = new DocumentHeaderDto();
         result.init(json);
         return result;
     }
 }
 
-export interface IDocumentDto {
+export interface IDocumentHeaderDto {
     id: number;
     documentNumber: string | undefined;
     documentDate: Date;
     registrationDate: Date;
-    status: string | undefined;
-    customer: Customer;
-    movements: Movement[] | undefined;
-    movementStatuses: DocumentMovementStatus[] | undefined;
+    customerDto: CustomerDto;
+    customerId: number;
+    isCompleted: boolean;
 }
 
-export class DocumentDtoPagedResultDto implements IDocumentDtoPagedResultDto {
-    items: DocumentDto[] | undefined;
+export class DocumentHeaderDtoPagedResultDto implements IDocumentHeaderDtoPagedResultDto {
+    items: DocumentHeaderDto[] | undefined;
     totalCount: number;
 
-    constructor(data?: IDocumentDtoPagedResultDto) {
+    constructor(data?: IDocumentHeaderDtoPagedResultDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -4951,15 +4744,15 @@ export class DocumentDtoPagedResultDto implements IDocumentDtoPagedResultDto {
             if (Array.isArray(_data["items"])) {
                 this.items = [] as any;
                 for (let item of _data["items"])
-                    this.items.push(DocumentDto.fromJS(item));
+                    this.items.push(DocumentHeaderDto.fromJS(item));
             }
             this.totalCount = _data["totalCount"];
         }
     }
 
-    static fromJS(data: any): DocumentDtoPagedResultDto {
+    static fromJS(data: any): DocumentHeaderDtoPagedResultDto {
         data = typeof data === 'object' ? data : {};
-        let result = new DocumentDtoPagedResultDto();
+        let result = new DocumentHeaderDtoPagedResultDto();
         result.init(data);
         return result;
     }
@@ -4975,72 +4768,17 @@ export class DocumentDtoPagedResultDto implements IDocumentDtoPagedResultDto {
         return data;
     }
 
-    clone(): DocumentDtoPagedResultDto {
+    clone(): DocumentHeaderDtoPagedResultDto {
         const json = this.toJSON();
-        let result = new DocumentDtoPagedResultDto();
+        let result = new DocumentHeaderDtoPagedResultDto();
         result.init(json);
         return result;
     }
 }
 
-export interface IDocumentDtoPagedResultDto {
-    items: DocumentDto[] | undefined;
+export interface IDocumentHeaderDtoPagedResultDto {
+    items: DocumentHeaderDto[] | undefined;
     totalCount: number;
-}
-
-export class DocumentMovementStatus implements IDocumentMovementStatus {
-    id: number;
-    isDeleted: boolean;
-    movement: Movement;
-    isCompleted: boolean;
-
-    constructor(data?: IDocumentMovementStatus) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.isDeleted = _data["isDeleted"];
-            this.movement = _data["movement"] ? Movement.fromJS(_data["movement"]) : <any>undefined;
-            this.isCompleted = _data["isCompleted"];
-        }
-    }
-
-    static fromJS(data: any): DocumentMovementStatus {
-        data = typeof data === 'object' ? data : {};
-        let result = new DocumentMovementStatus();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["isDeleted"] = this.isDeleted;
-        data["movement"] = this.movement ? this.movement.toJSON() : <any>undefined;
-        data["isCompleted"] = this.isCompleted;
-        return data;
-    }
-
-    clone(): DocumentMovementStatus {
-        const json = this.toJSON();
-        let result = new DocumentMovementStatus();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface IDocumentMovementStatus {
-    id: number;
-    isDeleted: boolean;
-    movement: Movement;
-    isCompleted: boolean;
 }
 
 export class ExternalAuthenticateModel implements IExternalAuthenticateModel {
@@ -5498,84 +5236,15 @@ export interface IIsTenantAvailableOutput {
     tenantId: number | undefined;
 }
 
-export class Movement implements IMovement {
-    id: number;
-    movementDate: Date;
-    product: Product;
-    movementType: MovementType;
-    warehouse: Warehouse;
-    stock: number;
-    documentId: number | undefined;
-    isDeleted: boolean;
-
-    constructor(data?: IMovement) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.movementDate = _data["movementDate"] ? new Date(_data["movementDate"].toString()) : <any>undefined;
-            this.product = _data["product"] ? Product.fromJS(_data["product"]) : <any>undefined;
-            this.movementType = _data["movementType"];
-            this.warehouse = _data["warehouse"] ? Warehouse.fromJS(_data["warehouse"]) : <any>undefined;
-            this.stock = _data["stock"];
-            this.documentId = _data["documentId"];
-            this.isDeleted = _data["isDeleted"];
-        }
-    }
-
-    static fromJS(data: any): Movement {
-        data = typeof data === 'object' ? data : {};
-        let result = new Movement();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["movementDate"] = this.movementDate ? this.movementDate.toISOString() : <any>undefined;
-        data["product"] = this.product ? this.product.toJSON() : <any>undefined;
-        data["movementType"] = this.movementType;
-        data["warehouse"] = this.warehouse ? this.warehouse.toJSON() : <any>undefined;
-        data["stock"] = this.stock;
-        data["documentId"] = this.documentId;
-        data["isDeleted"] = this.isDeleted;
-        return data;
-    }
-
-    clone(): Movement {
-        const json = this.toJSON();
-        let result = new Movement();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface IMovement {
-    id: number;
-    movementDate: Date;
-    product: Product;
-    movementType: MovementType;
-    warehouse: Warehouse;
-    stock: number;
-    documentId: number | undefined;
-    isDeleted: boolean;
-}
-
 export class MovementDto implements IMovementDto {
     id: number;
     movementDate: Date;
-    product: Product;
     movementType: MovementType;
-    warehouse: Warehouse;
+    productDto: ProductDto;
+    productId: number;
     stock: number;
+    warehouseDto: WarehouseDto;
+    warehouseId: number;
 
     constructor(data?: IMovementDto) {
         if (data) {
@@ -5590,10 +5259,12 @@ export class MovementDto implements IMovementDto {
         if (_data) {
             this.id = _data["id"];
             this.movementDate = _data["movementDate"] ? new Date(_data["movementDate"].toString()) : <any>undefined;
-            this.product = _data["product"] ? Product.fromJS(_data["product"]) : <any>undefined;
             this.movementType = _data["movementType"];
-            this.warehouse = _data["warehouse"] ? Warehouse.fromJS(_data["warehouse"]) : <any>undefined;
+            this.productDto = _data["productDto"] ? ProductDto.fromJS(_data["productDto"]) : <any>undefined;
+            this.productId = _data["productId"];
             this.stock = _data["stock"];
+            this.warehouseDto = _data["warehouseDto"] ? WarehouseDto.fromJS(_data["warehouseDto"]) : <any>undefined;
+            this.warehouseId = _data["warehouseId"];
         }
     }
 
@@ -5608,10 +5279,12 @@ export class MovementDto implements IMovementDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["movementDate"] = this.movementDate ? this.movementDate.toISOString() : <any>undefined;
-        data["product"] = this.product ? this.product.toJSON() : <any>undefined;
         data["movementType"] = this.movementType;
-        data["warehouse"] = this.warehouse ? this.warehouse.toJSON() : <any>undefined;
+        data["productDto"] = this.productDto ? this.productDto.toJSON() : <any>undefined;
+        data["productId"] = this.productId;
         data["stock"] = this.stock;
+        data["warehouseDto"] = this.warehouseDto ? this.warehouseDto.toJSON() : <any>undefined;
+        data["warehouseId"] = this.warehouseId;
         return data;
     }
 
@@ -5626,10 +5299,12 @@ export class MovementDto implements IMovementDto {
 export interface IMovementDto {
     id: number;
     movementDate: Date;
-    product: Product;
     movementType: MovementType;
-    warehouse: Warehouse;
+    productDto: ProductDto;
+    productId: number;
     stock: number;
+    warehouseDto: WarehouseDto;
+    warehouseId: number;
 }
 
 export class MovementDtoPagedResultDto implements IMovementDtoPagedResultDto {
@@ -5796,65 +5471,6 @@ export class PermissionDtoListResultDto implements IPermissionDtoListResultDto {
 
 export interface IPermissionDtoListResultDto {
     items: PermissionDto[] | undefined;
-}
-
-export class Product implements IProduct {
-    id: number;
-    productCode: string | undefined;
-    productName: string | undefined;
-    brand: string | undefined;
-    isDeleted: boolean;
-
-    constructor(data?: IProduct) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.productCode = _data["productCode"];
-            this.productName = _data["productName"];
-            this.brand = _data["brand"];
-            this.isDeleted = _data["isDeleted"];
-        }
-    }
-
-    static fromJS(data: any): Product {
-        data = typeof data === 'object' ? data : {};
-        let result = new Product();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["productCode"] = this.productCode;
-        data["productName"] = this.productName;
-        data["brand"] = this.brand;
-        data["isDeleted"] = this.isDeleted;
-        return data;
-    }
-
-    clone(): Product {
-        const json = this.toJSON();
-        let result = new Product();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface IProduct {
-    id: number;
-    productCode: string | undefined;
-    productName: string | undefined;
-    brand: string | undefined;
-    isDeleted: boolean;
 }
 
 export class ProductDto implements IProductDto {
@@ -6840,65 +6456,6 @@ export interface IUserLoginInfoDto {
     surname: string | undefined;
     userName: string | undefined;
     emailAddress: string | undefined;
-}
-
-export class Warehouse implements IWarehouse {
-    id: number;
-    warehouseCode: string | undefined;
-    warehouseName: string | undefined;
-    warehouseType: WarehouseType;
-    isDeleted: boolean;
-
-    constructor(data?: IWarehouse) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.warehouseCode = _data["warehouseCode"];
-            this.warehouseName = _data["warehouseName"];
-            this.warehouseType = _data["warehouseType"];
-            this.isDeleted = _data["isDeleted"];
-        }
-    }
-
-    static fromJS(data: any): Warehouse {
-        data = typeof data === 'object' ? data : {};
-        let result = new Warehouse();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["warehouseCode"] = this.warehouseCode;
-        data["warehouseName"] = this.warehouseName;
-        data["warehouseType"] = this.warehouseType;
-        data["isDeleted"] = this.isDeleted;
-        return data;
-    }
-
-    clone(): Warehouse {
-        const json = this.toJSON();
-        let result = new Warehouse();
-        result.init(json);
-        return result;
-    }
-}
-
-export interface IWarehouse {
-    id: number;
-    warehouseCode: string | undefined;
-    warehouseName: string | undefined;
-    warehouseType: WarehouseType;
-    isDeleted: boolean;
 }
 
 export class WarehouseDto implements IWarehouseDto {

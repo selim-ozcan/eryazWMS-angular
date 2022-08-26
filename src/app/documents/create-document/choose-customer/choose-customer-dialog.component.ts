@@ -22,7 +22,7 @@ import { DocumentService } from '../../documents.service';
 
 class PagedCustomerRequestDto extends PagedRequestDto {
     keyword: string;
-    isActive: boolean | null;
+    isDeleted: boolean | null;
 }
 
 @Component({
@@ -35,7 +35,7 @@ export class ChooseCustomerDialogComponent extends PagedListingComponentBase<Cus
 
     saving = false;
     customers: CustomerDto[];
-    isActive: boolean | null;
+    isDeleted: boolean | null;
     keyword: string = "";
     advancedFiltersVisible = false;
 
@@ -74,13 +74,13 @@ export class ChooseCustomerDialogComponent extends PagedListingComponentBase<Cus
         finishedCallback: Function
     ): void {
         request.keyword = this.keyword;
-        //request.isActive = this.isActive;
+        request.isDeleted = this.isDeleted;
 
         //console.log(request);
         this._customerService
             .getAllCustomersPaged(
                 request.keyword,
-                //request.isActive,
+                request.isDeleted,
                 request.skipCount,
                 request.maxResultCount
             )
@@ -99,7 +99,7 @@ export class ChooseCustomerDialogComponent extends PagedListingComponentBase<Cus
 
     clearFilters(): void {
         this.keyword = '';
-        this.isActive = undefined;
+        this.isDeleted = undefined;
         this.getDataPage(1);
     }
 

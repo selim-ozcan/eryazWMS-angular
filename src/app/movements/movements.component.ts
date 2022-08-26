@@ -18,7 +18,7 @@ import { CreateMovementDialogComponent } from './create-movement/create-movement
 
 class PagedMovementRequestDto extends PagedRequestDto {
     keyword: string;
-    isActive: boolean | null;
+    isDeleted: boolean | null;
 }
 
 @Component({
@@ -28,7 +28,7 @@ class PagedMovementRequestDto extends PagedRequestDto {
 export class MovementsComponent extends PagedListingComponentBase<MovementDto>{
     movements: MovementDto[] = [];
     keyword = '';
-    isActive: boolean | null;
+    isDeleted: boolean | null;
     advancedFiltersVisible = false;
     //totalCount: number;
     //itemsPerPage: number = 10;
@@ -48,13 +48,13 @@ export class MovementsComponent extends PagedListingComponentBase<MovementDto>{
         finishedCallback: Function
     ): void {
         request.keyword = this.keyword;
-        request.isActive = this.isActive;
+        request.isDeleted = this.isDeleted;
 
         //console.log(request);
         this._movementService
             .getAllMovementsPaged(
                 request.keyword,
-                //request.isActive,
+                request.isDeleted,
                 request.skipCount,
                 request.maxResultCount
             )
@@ -109,7 +109,7 @@ export class MovementsComponent extends PagedListingComponentBase<MovementDto>{
 
     clearFilters(): void {
         this.keyword = '';
-        this.isActive = undefined;
+        this.isDeleted = undefined;
         this.getDataPage(1);
     }
 
